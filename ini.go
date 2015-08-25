@@ -104,7 +104,7 @@ func (ini *IniConfig) parseFile(name string) (*IniConfigContainer, error) {
 		}
 
 		if bytes.HasPrefix(line, sectionStart) && bytes.HasSuffix(line, sectionEnd) {
-			section = strings.ToLower(string(line[1 : len(line)-1])) // section name case insensitive
+			section = string(line[1 : len(line)-1]) // section name case insensitive
 			if comment.Len() > 0 {
 				cfg.sectionComment[section] = comment.String()
 				comment.Reset()
@@ -121,7 +121,6 @@ func (ini *IniConfig) parseFile(name string) (*IniConfigContainer, error) {
 		keyValue := bytes.SplitN(line, bEqual, 2)
 
 		key := string(bytes.TrimSpace(keyValue[0])) // key name case insensitive
-		key = strings.ToLower(key)
 
 		// handle include "other.conf"
 		if len(keyValue) == 1 && strings.HasPrefix(key, "include") {
@@ -375,7 +374,7 @@ func (c *IniConfigContainer) Set(key, value string) error {
 
 // DIY returns the raw value by a given key.
 func (c *IniConfigContainer) DIY(key string) (v interface{}, err error) {
-	if v, ok := c.data[strings.ToLower(key)]; ok {
+	if v, ok := c.data[key]; ok {
 		return v, nil
 	}
 	return v, errors.New("key not find")
@@ -391,7 +390,7 @@ func (c *IniConfigContainer) getdata(key string) string {
 
 	var (
 		section, k string
-		sectionKey []string = strings.Split(strings.ToLower(key), "::")
+		sectionKey []string = strings.Split(key, "::")
 	)
 	if len(sectionKey) >= 2 {
 		section = sectionKey[0]
